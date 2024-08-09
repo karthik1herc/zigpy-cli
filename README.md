@@ -7,7 +7,7 @@ Zigbee tools into a single binary.
 ## Installation
 
 ```console
-$ pip install git+https://github.com/zigpy/zigpy-cli.git
+$ pip install zigpy-cli
 ```
 
 ## Usage
@@ -153,6 +153,38 @@ $ zigpy ota dump-firmware 10047227-1.2-TRADFRI-cv-cct-unified-2.3.050.ota.ota.si
       | commander ebl print /dev/stdin \
       | grep 'Ember Version'
 Ember Version:    6.3.1.1
+```
+
+## Generate OTA index files
+
+Create a JSON index for a given directory of firmwares:
+
+```console
+$ zigpy ota generate-index --ota-url-root="https://example.org/fw" path/to/firmwares/**/*.ota
+2023-02-14 12:02:03.532 ubuntu zigpy_cli.ota INFO Parsing path/to/firmwares/fw/test.ota
+2023-02-14 12:02:03.533 ubuntu zigpy_cli.ota INFO Writing path/to/firmwares/fw/test.ota
+[
+    {
+        "binary_url": "https://example.org/fw/test.ota",
+        "file_version": 1762356,
+        "image_type": 1234,
+        "manufacturer_id": 5678,
+        "changelog": "",
+        "checksum": "sha3-256:1ddaa649eb920dea9e5f002fe0d1443cc903ac0c1b26e7ad2c97b928edec2786"
+    },
+...
+```
+
+## Reconstruct an OTA image from a series of packet captures
+
+Requires the `tshark` binary to be available.
+
+```console
+$ zigpy ota reconstruct-from-pcaps --add-network-key aa:bb:cc:dd:ee:ff:00:11:22:33:44:55:66:77:88:99 --output-root ./extracted/ *.pcap
+Constructing image type=0x298b, version=0x00000005, manuf_code=0x115f: 157424 bytes
+2023-02-22 03:39:51.406 ubuntu zigpy_cli.ota ERROR Missing 48 bytes starting at offset 0x0000ADA0: filling with 0xAB
+2023-02-22 03:39:51.406 ubuntu zigpy_cli.ota ERROR Missing 48 bytes starting at offset 0x000106B0: filling with 0xAB
+Constructing image type=0x298b, version=0x00000009, manuf_code=0x115f: 163136 bytes
 ```
 
 
